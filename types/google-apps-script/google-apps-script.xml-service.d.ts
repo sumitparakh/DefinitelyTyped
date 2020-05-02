@@ -1,6 +1,7 @@
-// Type definitions for Google Apps Script 2019-11-06
+// Type definitions for Google Apps Script 2020-01-02
 // Project: https://developers.google.com/apps-script/
-// Definitions by: motemen <https://github.com/motemen/>
+// Definitions by: PopGoesTheWza <https://github.com/PopGoesTheWza>
+//                 motemen <https://github.com/motemen/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference path="google-apps-script.types.d.ts" />
@@ -47,7 +48,7 @@ declare namespace GoogleAppsScript {
      *     var xml = XmlService.getPrettyFormat().format(document);
      *     Logger.log(xml);
      */
-    interface Cdata {
+    interface Cdata extends Content {
       append(text: string): Text;
       detach(): Content;
       getParentElement(): Element;
@@ -58,7 +59,7 @@ declare namespace GoogleAppsScript {
     /**
      * A representation of an XML Comment node.
      */
-    interface Comment {
+    interface Comment extends Content {
       detach(): Content;
       getParentElement(): Element;
       getText(): string;
@@ -105,7 +106,7 @@ declare namespace GoogleAppsScript {
     /**
      * A representation of an XML DocumentType node.
      */
-    interface DocType {
+    interface DocType extends Content {
       detach(): Content;
       getElementName(): string;
       getInternalSubset(): string;
@@ -160,7 +161,7 @@ declare namespace GoogleAppsScript {
      *     xml = XmlService.getPrettyFormat().format(document);
      *     Logger.log(xml);
      */
-    interface Element {
+    interface Element extends Content {
       addContent(content: Content): Element;
       addContent(index: Integer, content: Content): Element;
       cloneContent(): Content[];
@@ -205,7 +206,7 @@ declare namespace GoogleAppsScript {
     /**
      * A representation of an XML EntityReference node.
      */
-    interface EntityRef {
+    interface EntityRef extends Content {
       detach(): Content;
       getName(): string;
       getParentElement(): Element;
@@ -249,7 +250,7 @@ declare namespace GoogleAppsScript {
     /**
      * A representation of an XML ProcessingInstruction node.
      */
-    interface ProcessingInstruction {
+    interface ProcessingInstruction extends Content {
       detach(): Content;
       getData(): string;
       getParentElement(): Element;
@@ -259,7 +260,7 @@ declare namespace GoogleAppsScript {
     /**
      * A representation of an XML Text node.
      */
-    interface Text {
+    interface Text extends Content {
       append(text: string): Text;
       detach(): Content;
       getParentElement(): Element;

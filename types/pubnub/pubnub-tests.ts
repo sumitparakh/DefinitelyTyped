@@ -75,6 +75,26 @@ pubnub.addListener({
             data: { userId, spaceId, eTag, created, updated, custom },
         },
     }) => console.log({ userId, spaceId, eTag, created, updated, custom }),
+    messageAction: ({
+        channel,
+        publisher,
+        subscription,
+        timetoken,
+        message: {
+            event,
+            data: { type, value, uuid, actionTimetoken, messageTimetoken },
+        },
+    }) =>
+        console.log({
+            channel,
+            publisher,
+            subscription,
+            timetoken,
+            message: {
+                event,
+                data: { type, value, uuid, actionTimetoken, messageTimetoken },
+            },
+        }),
 });
 
 pubnub.unsubscribe({ channels: ['channel-1'] });
@@ -277,6 +297,8 @@ pubnub.decrypt('mySecretString', undefined, cryptoOptions);
 pubnub.encrypt('egrah5rwgrehwqh5eh3hwfwef', undefined, cryptoOptions);
 
 pubnub.time().then(response => console.log(response));
+
+pubnub.time((status, response) => console.log(status, response));
 
 const channelGroup = 'channel-group-1';
 const channels = ['channel-1'];
@@ -697,3 +719,7 @@ pubnub
         limit: 100,
     })
     .then(res => console.log(res));
+
+// APNS
+
+Pubnub.notificationPayload('Chat invitation', 'You have been invited to \'quiz\' chat').buildPayload(['apns2', 'fcm']);

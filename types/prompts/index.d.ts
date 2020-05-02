@@ -1,10 +1,11 @@
 // Type definitions for prompts 2.0
 // Project: https://github.com/terkelg/prompts
 // Definitions by: Berkay GURSOY <https://github.com/Berkays>
-//                 Daniel Perez Alvarez <https://github.com/danielpa9708>
+//                 Daniel Perez Alvarez <https://github.com/unindented>
 //                 Kamontat Chantrachirathumrong <https://github.com/kamontat>
 //                 theweirdone <https://github.com/theweirdone>
 //                 whoaa512 <https://github.com/whoaa512>
+//                 John Reilly <https://github.com/johnnyreilly>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.9
 
@@ -55,10 +56,13 @@ declare namespace prompts {
         function toggle(args: PromptObject): void;
     }
 
+    // Based upon: https://github.com/terkelg/prompts/blob/d7d2c37a0009e3235b2e88a7d5cdbb114ac271b2/lib/elements/select.js#L29
     interface Choice {
         title: string;
         value: any;
-        disable?: boolean;
+        disabled?: boolean;
+        selected?: boolean;
+        description?: string;
     }
 
     interface Options {
@@ -80,7 +84,7 @@ declare namespace prompts {
         float?: boolean;
         round?: number;
         increment?: number;
-        seperator?: string;
+        separator?: string;
         active?: string;
         inactive?: string;
         choices?: Choice[];

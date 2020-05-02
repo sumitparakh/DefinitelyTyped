@@ -1,9 +1,9 @@
-// Type definitions for jest-image-snapshot 2.11
+// Type definitions for jest-image-snapshot 2.12
 // Project: https://github.com/americanexpress/jest-image-snapshot#readme
 // Definitions by: Janeene Beeforth <https://github.com/dawnmist>
 //                 erbridge <https://github.com/erbridge>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 3.0
+// TypeScript Version: 3.1
 
 /// <reference types="jest" />
 
@@ -36,16 +36,23 @@ export interface MatchImageSnapshotOptions {
      * it is called with an object containing testPath, currentTestName, counter and defaultIdentifier as its first
      * argument. The function must return an identifier to use for the snapshot.
      */
-    customSnapshotIdentifier?: (parameters: {
-        testPath: string;
-        currentTestName: string;
-        counter: number;
-        defaultIdentifier: string;
-    }) => string | string;
+    customSnapshotIdentifier?:
+        | ((parameters: {
+              testPath: string;
+              currentTestName: string;
+              counter: number;
+              defaultIdentifier: string;
+          }) => string)
+        | string;
     /**
      * Changes diff image layout direction, default is horizontal.
      */
     diffDirection?: 'horizontal' | 'vertical';
+    /**
+     * Will output base64 string of a diff image to console in case of failed tests (in addition to creating a diff image).
+     * This string can be copy-pasted to a browser address string to preview the diff for a failed test.
+     */
+    dumpDiffToConsole?: boolean;
     /**
      * Removes coloring from the console output, useful if storing the results to a file.
      * Defaults to false.

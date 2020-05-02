@@ -1,26 +1,26 @@
-// Type definitions for theme-ui 0.2
+// Type definitions for theme-ui 0.3
 // Project: https://github.com/system-ui/theme-ui#readme
 // Definitions by: Erik Stockmeier <https://github.com/erikdstock>
 //                 Ifiok Jr. <https://github.com/ifiokjr>
 //                 Brian Andrews <https://github.com/sbardian>
 //                 Rodrigo Pombo <https://github.com/pomber>
 //                 Justin Hall <https://github.com/wKovacs64>
+//                 Prateek Kathal <https://github.com/prateekkathal>
+//                 Piotr Monwid-Olechnowicz <https://github.com/hasparus>
+//                 Leo Lin <https://github.com/leocantthinkfoaname>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 3.1
+// TypeScript Version: 3.5
 
-import { ResponsiveStyleValue, SystemStyleObject } from '@styled-system/css';
+import { SystemStyleObject } from '@styled-system/css';
 import * as CSS from 'csstype';
 import * as React from 'react';
-import { lineHeight, Theme as StyledSystemTheme } from 'styled-system';
+import { Theme as StyledSystemTheme } from 'styled-system';
+import { Interpolation, SerializedStyles } from '@emotion/serialize';
+export * from '@theme-ui/components';
 
 export {};
 
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 type ObjectOrArray<T> = T[] | { [K: string]: T | ObjectOrArray<T> };
-
-interface Object<T> {
-    [k: string]: T | Object<T>;
-}
 
 export interface ThemeProviderProps<Theme> {
     theme: Partial<Theme> | ((outerTheme: Theme) => Theme);
@@ -37,7 +37,7 @@ export function ThemeProvider<Theme>(props: ThemeProviderProps<Theme>): React.Re
  * nested objects within a theme.colors.modes object. Each key in this object
  * should correspond to a color mode name, where the name can be anything, but
  * typically light and dark are used for applications with a dark mode. The
- * initialColorMode key is required to enable color modes and will be used as
+ * initialColorModeName key is required to enable color modes and will be used as
  * the name for the root color palette.
  */
 export type ColorMode = {
@@ -75,11 +75,19 @@ export type ColorMode = {
     accent?: CSS.ColorProperty;
 };
 
-export interface Theme extends StyledSystemTheme {
+export interface Theme extends Omit<StyledSystemTheme, 'colors'> {
+    /**
+     * Enable/disable custom CSS properties/variables if lower browser
+     * support is required (for eg. IE 11).
+     *
+     * References: https://theme-ui.com/color-modes/#turn-off-custom-properties
+     */
+    useCustomProperties?: boolean;
+
     /**
      * Provide a value here to enable color modes
      */
-    initialColorMode?: string;
+    initialColorModeName?: string;
 
     /**
      * Define the colors that are available through this theme
@@ -87,7 +95,7 @@ export interface Theme extends StyledSystemTheme {
     colors?: ColorMode & {
         /**
          * Nested color modes can provide overrides when used in conjunction with
-         * `Theme.initialColorMode and `useColorMode()`
+         * `Theme.initialColorModeName and `useColorMode()`
          */
         modes?: {
             [k: string]: ColorMode;
@@ -114,17 +122,21 @@ export interface Theme extends StyledSystemTheme {
 export const jsx: typeof React.createElement;
 
 /**
- * The `SxStyleProp` extension `SystemStyleObject` and `Emotion` [style props](https://emotion.sh/docs/object-styles)
- * such that properties that are part of the `Theme` will be transformed to
- * their corresponding values. Other valid CSS properties are also allowed.
+ * A utility from @styled-system/css for theming styles to be passed to Emotion's
+ * css prop.
+ *
+ * Refer:
+ * 1. https://styled-system.com/css/
+ * 2. https://emotion.sh/docs/object-styles#with-css
  */
-export type SxStyleProp = SystemStyleObject &
-    Record<
-        string,
-        | SystemStyleObject
-        | ResponsiveStyleValue<number | string>
-        | Record<string, SystemStyleObject | ResponsiveStyleValue<number | string>>
-    >;
+export function css(styleObject: Interpolation): (theme: Theme) => SerializedStyles;
+
+/**
+ * The `sx` prop accepts a `SxStyleProp` object and properties that are part of
+ * the `Theme` will be transformed to their corresponding values. Other valid
+ * CSS properties are also allowed.
+ */
+export type SxStyleProp = SystemStyleObject;
 
 export interface SxProps {
     /**
@@ -142,14 +154,6 @@ export interface SxProps {
 }
 
 type SxComponent<T extends SxProps = IntrinsicSxElements['div']> = React.ComponentClass<T & { as?: React.ElementType }>;
-
-export const Box: SxComponent;
-export const Container: SxComponent;
-export const Flex: SxComponent;
-export const Header: SxComponent;
-export const Footer: SxComponent;
-export const Layout: SxComponent;
-export const Main: SxComponent;
 
 export interface IntrinsicSxElements {
     p: JSX.IntrinsicElements['p'] & SxProps;
@@ -192,7 +196,8 @@ export const Styled: {
 
 interface ThemeUIContext {
     theme: Theme;
-    components: { [P in keyof IntrinsicSxElements]: SxComponent<IntrinsicSxElements[P]> };
+    colorMode: string;
+    setColorMode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const Context: React.Context<ThemeUIContext>;
